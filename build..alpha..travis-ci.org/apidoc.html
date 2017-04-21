@@ -1,0 +1,163 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+    >gulp-typedoc (v2.0.2)</a>
+</h1>
+<h4>Gulp plugin for the TypeDoc typescript documentation tool.</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gulp-typedoc">module gulp-typedoc</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-typedoc.gulp-typedoc">
+            function <span class="apidocSignatureSpan"></span>gulp-typedoc
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gulp-typedoc" id="apidoc.module.gulp-typedoc">module gulp-typedoc</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-typedoc.gulp-typedoc" id="apidoc.element.gulp-typedoc.gulp-typedoc">
+        function <span class="apidocSignatureSpan"></span>gulp-typedoc
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function typedoc(options) {
+	var files = [];
+	options = options || {};
+
+	return es.through(function(file) {
+		files.push(file.path);
+	}, function() {
+		// end of stream, start typedoc
+		var stream = this;
+
+		if (files.length === 0) {
+			stream.emit(&#x22;error&#x22;, new PluginError(PLUGIN_NAME, &#x22;No input files for TypeDoc.&#x22;));
+			stream.emit(&#x22;end&#x22;);
+			return;
+		} else if (!options.out &#x26;&#x26; !options.json) {
+			stream.emit(&#x22;error&#x22;, new PluginError(PLUGIN_NAME, &#x22;You must either specify the &#x27;out&#x27; or &#x27;json&#x27; option.&#x22;));
+			stream.emit(&#x22;end&#x22;);
+			return;
+		} else {
+			// leaving the &#x27;out&#x27; or &#x27;version&#x27; option in causes typedoc error for some reason
+			var out = options.out;
+			delete options.out;
+			var json = options.json;
+			delete options.json;
+			var version = options.version;
+			delete options.version;
+
+			// reduce console logging
+			options.logger = function(message, level, newline) {
+				if (level === 3) {
+					gutil.log(gutil.colors.red(message));
+				}
+			}
+
+			// typedoc instance
+			var app = new typedocModule.Application(options);
+
+			if (version) {
+				gutil.log(app.toString());
+			}
+			try {
+				var src = app.expandInputFiles(files);
+				var project = app.convert(src);
+				if (project) {
+					if (out) app.generateDocs(project, out);
+					if (json) app.generateJson(project, json);
+					if (app.logger.hasErrors()) {
+						stream.emit(&#x22;error&#x22;, new PluginError(PLUGIN_NAME, &#x22;There were errors generating TypeDoc output, see above.&#x22;));
+						stream.emit(&#x22;end&#x22;);
+						return;
+					}
+				} else {
+					stream.emit(&#x22;error&#x22;, new PluginError(PLUGIN_NAME, &#x22;Failed to generate load TypeDoc project.&#x22;));
+					stream.emit(&#x22;end&#x22;);
+					return;
+				}
+				stream.emit(&#x22;end&#x22;);
+				return;
+			} catch (e) {
+				stream.emit(&#x22;error&#x22;, e);
+				stream.emit(&#x22;end&#x22;);
+				return;
+			}
+		}
+	});
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
